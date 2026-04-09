@@ -91,3 +91,43 @@ void *check_columns(void *arg)
     primtf("Thread ID-%lu: Column checks completed.\n", pthread_self());
     pthread_exit(NULL);
 }
+
+/* Diognal validation thread */
+void *check_diagonals(void *arg)
+{
+    int sum1 = 0;
+    int sum2 = 0;
+
+    for(int i = 0; i < n; i++)
+    {
+        sum1 += matrix[i][i];
+        sum2 += matrix[i][n-i-1];
+    }
+
+    sleep(1);
+
+    if(sum1 == magic_constant)
+    {
+        diag_status[0] = 1;
+        update_score(1);
+    }
+    else
+    {
+        diag_status[0] = 0;
+        update_score(0);
+    }
+
+    if(sum2 == magic_constant)
+    {
+        diag_status[1] = 1;
+        update_score(1);
+    }
+    else
+    {
+        diag_status[1] = 0;
+        update_score(0);
+    }
+
+    printf("Thread ID-%lu: Diagonal checks completed.\n", pthread_self());
+    pthread_exit(NULL);
+}

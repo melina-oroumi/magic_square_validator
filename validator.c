@@ -200,5 +200,60 @@ void print_report()
 
     /* Diagonals */
     if(diag_status[0] && diag_status[1])
-        printf("Diags")
+        printf("Diags: All Valid\n");
+    else{
+        if(!diag_status[0])
+            printf("Diag: Main Diag Invalid\n");
+        if(!diag_status[1])
+            printf("Diags: Secondary Diag Invalid\n");
+    }
+
+    /* Uniqueness */
+    if(unique_status)
+        printf("Unique: Passes\n");
+    else
+        printf("Unique: Failed (Duplicates found)\n");
+
+    printf("Final Score: %d / %d\n", score, max_score);
+
+    if(score == max_score)
+        printf("RESULT: VALID MAGIC SQUARE\n");
+    else
+        printf("RESULT: INVALID MAGIC SQUARE\n");
+}
+
+int main(int argc, char *argv[])
+{
+    if(argc != 2)
+    {
+        printf("Usage: %s inputfile\n", argv[0]);
+        return 1;
+    }
+
+    FILE *fp = fopen(argv[1], "r");
+    if(!fp)
+    {
+        printf("Error opening file.\n");
+        return 1;
+    }
+
+    fscanf(fp, "%d", &n);
+
+    for(int i = 0; i < n; i++)
+        for(int j = 0; j< n; j++)
+            fscanf(fp, "%d", &matrix[i][j]);
+
+    fclose(fp);
+
+    magic_constant = n * (n*n + 1) / 2
+    max_score = n + n + 2 + 1;
+
+    pthread_mutex_init(&lock, NULL);
+
+    pthread_t t1, t2, t3, t4;
+
+    pthread_creat(&t1, NULL, check_rows, NULL);
+    pthread_create(&2, NULL, check_columns, NULL);
+    pthread_create(%t3, NULL, check_diagonals, NULL);
+    pthread_create(&t4, NULL, check_unique, NULL);
 }

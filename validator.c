@@ -245,7 +245,7 @@ int main(int argc, char *argv[])
 
     fclose(fp);
 
-    magic_constant = n * (n*n + 1) / 2
+    magic_constant = n * (n*n + 1) / 2;
     max_score = n + n + 2 + 1;
 
     pthread_mutex_init(&lock, NULL);

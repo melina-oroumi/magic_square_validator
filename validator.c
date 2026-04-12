@@ -131,3 +131,74 @@ void *check_diagonals(void *arg)
     printf("Thread ID-%lu: Diagonal checks completed.\n", pthread_self());
     pthread_exit(NULL);
 }
+
+/* Uniqueness validation thread */
+void *check_unique(void *args)
+{
+    int seen[MAX*MAX+1] = {0};
+    int valid = 1;
+
+    for(int i = 0; i < n; i++)
+    {
+        for(int j = 0; j < n; j++)
+        {
+            int val = matrix[i][j];
+
+            if(val < 1 || val > n*n || seen[val])
+            {
+                valid = 0;
+                break;
+            }
+
+            seen[val] = 1;
+        }
+    }
+
+    sleep(1);
+
+    unique_status = valid;
+
+    if(valid)
+        update_score(1);
+    else
+        update_score(0);
+
+    printf("Thread ID-%lu: Uniqueness check completed.\n", pthread_self());
+    pthread_exit(NULL);
+}
+
+/* Print report */
+void print_report()
+{
+    printf("\n--- Magic Square Report ---\n");
+
+    /* Rows */
+    int all_valid = 1;
+    for(int i = 0; i < n; i++)
+    {
+        if(row_status[i] == 0)
+        {
+            printf("Rows: Row %d Invalid\n", i+1);
+            all_valid = 0;
+        }
+    }
+    if(all_valid)
+        printf("Rows: All valid\n");
+
+    /* Columns */
+    all_valid = 1;
+    for(int i = 0; i < n; i++)
+    {
+        if(col_status[i] == 0)
+        {
+            printf("Cols: Col %d Invalid\n", i+1);
+            all_valid = 0;
+        }
+    }
+    if(all_valid)
+        printf("Cols: All valid\n");
+
+    /* Diagonals */
+    if(diag_status[0] && diag_status[1])
+        printf("Diags")
+}

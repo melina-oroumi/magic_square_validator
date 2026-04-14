@@ -32,7 +32,7 @@ void update_score(int valid)
         if(score < 0)
             score = 0;
     }
-    
+
     pthread_mutex_unlock(&lock);
 }
 
@@ -45,8 +45,8 @@ void *check_rows(void *arg)
 
         for(int j = 0; j < n; j++)
             sum += matrix[i][j];
-        
-        sleep(1);   // artificial delay
+
+        sleep(1);
 
         if(sum == magic_constant)
         {
@@ -60,12 +60,11 @@ void *check_rows(void *arg)
         }
     }
 
-    printf("Thread ID-%lu: Row checks completed.\n", pthread_self());
+    printf("Thread ID-%lu: Row checks completed.\n", (unsigned long)pthread_self());    printf("Thread ID-%lu: Row checks completed.\n", pthread_self());
     pthread_exit(NULL);
 }
 
 /* Column validation thread */
-
 void *check_columns(void *arg)
 {
     for(int i = 0; i < n; i++)
@@ -82,17 +81,18 @@ void *check_columns(void *arg)
             col_status[i] = 1;
             update_score(1);
         }
-        else{
+        else
+        {
             col_status[i] = 0;
             update_score(0);
         }
     }
 
-    primtf("Thread ID-%lu: Column checks completed.\n", pthread_self());
+    printf("Thread ID-%lu: Row checks completed.\n", (unsigned long)pthread_self());
     pthread_exit(NULL);
 }
 
-/* Diognal validation thread */
+/* Diagonal validation thread */
 void *check_diagonals(void *arg)
 {
     int sum1 = 0;
@@ -128,12 +128,12 @@ void *check_diagonals(void *arg)
         update_score(0);
     }
 
-    printf("Thread ID-%lu: Diagonal checks completed.\n", pthread_self());
+    printf("Thread ID-%lu: Row checks completed.\n", (unsigned long)pthread_self());
     pthread_exit(NULL);
 }
 
 /* Uniqueness validation thread */
-void *check_unique(void *args)
+void *check_unique(void *arg)
 {
     int seen[MAX*MAX+1] = {0};
     int valid = 1;
@@ -152,6 +152,9 @@ void *check_unique(void *args)
 
             seen[val] = 1;
         }
+
+        if(!valid)
+            break;
     }
 
     sleep(1);
@@ -163,7 +166,7 @@ void *check_unique(void *args)
     else
         update_score(0);
 
-    printf("Thread ID-%lu: Uniqueness check completed.\n", pthread_self());
+    printf("Thread ID-%lu: Row checks completed.\n", (unsigned long)pthread_self());
     pthread_exit(NULL);
 }
 
@@ -201,7 +204,8 @@ void print_report()
     /* Diagonals */
     if(diag_status[0] && diag_status[1])
         printf("Diags: All Valid\n");
-    else{
+    else
+    {
         if(!diag_status[0])
             printf("Diag: Main Diag Invalid\n");
         if(!diag_status[1])
@@ -240,7 +244,7 @@ int main(int argc, char *argv[])
     fscanf(fp, "%d", &n);
 
     for(int i = 0; i < n; i++)
-        for(int j = 0; j< n; j++)
+        for(int j = 0; j < n; j++)
             fscanf(fp, "%d", &matrix[i][j]);
 
     fclose(fp);
@@ -252,8 +256,19 @@ int main(int argc, char *argv[])
 
     pthread_t t1, t2, t3, t4;
 
-    pthread_creat(&t1, NULL, check_rows, NULL);
-    pthread_create(&2, NULL, check_columns, NULL);
-    pthread_create(%t3, NULL, check_diagonals, NULL);
+    pthread_create(&t1, NULL, check_rows, NULL);
+    pthread_create(&t2, NULL, check_columns, NULL);
+    pthread_create(&t3, NULL, check_diagonals, NULL);
     pthread_create(&t4, NULL, check_unique, NULL);
+
+    pthread_join(t1, NULL);
+    pthread_join(t2, NULL);
+    pthread_join(t3, NULL);
+    pthread_join(t4, NULL);
+
+    print_report();
+
+    pthread_mutex_destroy(&lock);
+
+    return 0;
 }
